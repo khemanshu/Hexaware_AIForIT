@@ -1,0 +1,17 @@
+# Project: Hexaware AI For IT
+jira_project: KAN
+github_repo: khemanshu/Hexaware_AIForIT
+github_default_branch: main
+
+confluence_space: KAN
+confluence_tech_impl_folder: Agentforce Technical Implementation
+confluence_design_doc_folder: Agentforce Design Documents
+
+global_manifest: manifest/package.xml
+agent_manifest_dir: manifest/agents/
+branch_prefix: feature/
+salesforce_api_version: "66.0"
+metadata_root: force-app/main/default
+
+apex_test_level: NoTestRun
+commit_signature: "🤖 Generated with Claude Code (Hexaware Agentforce Library)"
