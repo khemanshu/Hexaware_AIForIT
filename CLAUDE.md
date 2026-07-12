@@ -4,6 +4,17 @@ This repo runs an autonomous, human-gated Salesforce delivery pipeline driven fr
 Jira ticket down to a validated GitHub Pull Request. The main Claude session acts as
 the **orchestrator** and delegates to specialized subagents in `.claude/agents/`.
 
+This is the single source of truth for ticket-work orchestration in this repo. The
+`.claude/skills/agentforce-ticket-pipeline` skill is a deprecated stub that points back
+here — do not resurrect its old Confluence-only / monolithic flow.
+
+## Config
+Load `.agentforce-pipeline.yml` at the start of Phase 1 and bind its keys for the rest of
+the ticket: `jira_project`, `github_repo`, `github_default_branch`, `branch_prefix`,
+`confluence_space`, `confluence_tech_impl_folder`, `global_manifest`,
+`salesforce_api_version`. If the file is missing, ask the user for `jira_project` and
+`confluence_space`/`confluence_tech_impl_folder` before proceeding — don't hardcode values.
+
 ## Golden rules
 - NEVER skip a human confirmation gate. When the protocol says "STOP and wait for
   CONFIRM", stop your turn and wait for the user to type `CONFIRM` before continuing.
@@ -12,7 +23,10 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
   (Apex, Flows, Permission Sets, GenAI prompt templates, etc.). Do not hand-roll code
   that a skill already standardizes.
 - Follow the conventions in `MEMORY.md` (enterprise source-of-truth) when it exists.
-- All new metadata goes on a feature branch named `feature/<TICKET-ID>`, never `main`.
+- All new metadata goes on a feature branch named `{branch_prefix}<TICKET-ID>-<kebab-slug>`
+  (e.g. `feature/KAN-22-region-field-on-case`), created on GitHub first (remote), then
+  fetched and checked out locally — never branch locally off a stale `main`, and never
+  commit to `main`.
 - In Phase 4, always dispatch `sf-developer` and `qa-test-writer` in parallel (single turn,
   two `Agent` calls). QA test-scenario drafting is independent of the build/validate loop
   and must never block on it or be skipped.
@@ -20,18 +34,23 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
 ## The pipeline (invoked via `/work-ticket <TICKET-ID>`)
 
 ### Phase 1 — Intake & TDD generation
-1. Delegate to the `jira-coordinator` subagent to fetch the ticket's title,
+1. Load `.agentforce-pipeline.yml` (see Config above).
+2. Delegate to the `jira-coordinator` subagent to fetch the ticket's title,
    description, and acceptance criteria.
-2. Delegate to the `sf-architect` subagent to produce a Technical Design Document
+3. Delegate to the `sf-architect` subagent to produce a Technical Design Document
    (TDD) in markdown, cross-referenced against `MEMORY.md`. The architect is
    READ-ONLY — it must not write source files.
-3. Present the TDD in chat.
-4. **STOP and wait for CONFIRM.**
+4. Present the TDD in chat.
+5. **STOP and wait for CONFIRM.**
 
-### Phase 2 — Jira design-sync gate
-1. Once the user confirms, delegate to `jira-coordinator` to post the approved TDD as
-   a comment on the Jira issue (audit trail).
-2. Report the comment URL, then proceed.
+### Phase 2 — Design-sync gate (Confluence + Jira)
+1. Once the user confirms, delegate to `jira-coordinator` to:
+   - Create a Confluence page under `{confluence_space}` /
+     `{confluence_tech_impl_folder}` (title: `<TICKET-ID> — <summary> — Technical Design`)
+     containing the full TDD — this is the durable record.
+   - Post a condensed summary plus the Confluence page URL as a comment on the Jira
+     issue (audit trail) — do not paste the entire TDD into the Jira comment.
+2. Report both URLs, then proceed.
 
 ### Phase 3 — Sandbox selection gate
 1. Delegate to `sf-developer` to run `sf org list --json` and present the authenticated
@@ -40,8 +59,9 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
 
 ### Phase 4 — Build, validate & self-heal
 1. Dispatch two subagents in parallel (single turn, two `Agent` tool calls):
-   - `sf-developer`: creates branch `feature/<TICKET-ID>`, generates the metadata + Apex
-     tests using the Salesforce skills, and updates `manifest/package.xml`.
+   - `sf-developer`: runs the mandatory pre-build repo scan (see its own instructions),
+     creates branch `{branch_prefix}<TICKET-ID>-<kebab-slug>` remote-first, generates the
+     metadata + Apex tests using the Salesforce skills, and updates `{global_manifest}`.
    - `qa-test-writer`: drafts Test Cases / Test Scenarios from the confirmed TDD and
      acceptance criteria, and posts them as a comment on the Jira issue. Read-only on the
      filesystem/org — its only write is the Jira comment.
@@ -56,6 +76,9 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
    `gh pr create`.
 2. Report the PR URL. The GitHub Action in `.github/workflows/` posts the automated
    line-level review.
+
+The pipeline stops here. Deployment to Salesforce after merge is a separate, manual,
+out-of-band action — not part of this protocol.
 
 ## Model routing
 Subagents declare their own model in frontmatter (architect/developer on the
