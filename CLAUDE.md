@@ -13,6 +13,9 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
   that a skill already standardizes.
 - Follow the conventions in `MEMORY.md` (enterprise source-of-truth) when it exists.
 - All new metadata goes on a feature branch named `feature/<TICKET-ID>`, never `main`.
+- In Phase 4, always dispatch `sf-developer` and `qa-test-writer` in parallel (single turn,
+  two `Agent` calls). QA test-scenario drafting is independent of the build/validate loop
+  and must never block on it or be skipped.
 
 ## The pipeline (invoked via `/work-ticket <TICKET-ID>`)
 
@@ -36,13 +39,17 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
 2. **STOP and wait** for the user to name the target org alias.
 
 ### Phase 4 — Build, validate & self-heal
-1. `sf-developer` creates branch `feature/<TICKET-ID>`, generates the metadata + Apex
-   tests using the Salesforce skills, and updates `manifest/package.xml`.
-2. Run a check-only, targeted dry run:
+1. Dispatch two subagents in parallel (single turn, two `Agent` tool calls):
+   - `sf-developer`: creates branch `feature/<TICKET-ID>`, generates the metadata + Apex
+     tests using the Salesforce skills, and updates `manifest/package.xml`.
+   - `qa-test-writer`: drafts Test Cases / Test Scenarios from the confirmed TDD and
+     acceptance criteria, and posts them as a comment on the Jira issue. Read-only on the
+     filesystem/org — its only write is the Jira comment.
+2. Once `sf-developer` has generated the metadata, run a check-only, targeted dry run:
    `sf project deploy start --dry-run --test-level RunSpecifiedTests --tests <TestClass> --target-org <alias> --json`
 3. Parse the JSON. If compile errors / assertion failures appear, open the failing file,
    fix it, and re-run the dry run. Loop until success.
-4. Report the green result.
+4. Report the green result and the Jira test-scenarios comment URL from `qa-test-writer`.
 
 ### Phase 5 — PR creation
 1. `sf-developer` stages, commits, pushes the branch, and opens a PR to `main` via
@@ -52,4 +59,5 @@ the **orchestrator** and delegates to specialized subagents in `.claude/agents/`
 
 ## Model routing
 Subagents declare their own model in frontmatter (architect/developer on the
-higher-reasoning tier, jira-coordinator on the fast tier). Adjust in each agent file.
+higher-reasoning tier, jira-coordinator on the fast tier, qa-test-writer on the
+mid tier). Adjust in each agent file.
