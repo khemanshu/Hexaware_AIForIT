@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Primary__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Marks this Contact as the primary point of contact for its Account. Checking this box promotes the Contact to Account.Primary_Contact__c; unchecking it triggers fallback reconciliation to the next most recently marked Contact.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Check to designate this Contact as the primary contact for its Account.</inlineHelpText>
+    <label>Is Primary</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -34,7 +34,19 @@
     </types>
     <types>
         <members>Case.Region__c</members>
+        <members>Account.Primary_Contact__c</members>
+        <members>Contact.Is_Primary__c</members>
+        <members>Contact.Primary_Marked_Date__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>Primary_Contact_Management</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Account-Account Layout</members>
+        <members>Contact-Contact Layout</members>
+        <name>Layout</name>
     </types>
     <version>67.0</version>
 </Package>
