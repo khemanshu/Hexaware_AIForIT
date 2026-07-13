@@ -1,7 +1,7 @@
 ---
 name: jira-coordinator
 description: Fetches Jira ticket specifications and syncs approved design docs to Confluence and Jira. Use for any read/write against the Jira board (ticket details, acceptance criteria, adding comments) or the Confluence Technical Implementation space. Runs focused JQL/issue and Confluence lookups to keep the main context lean.
-tools: Read, mcp__atlassian
+tools: Read, mcp__claude_ai_Atlassian_Rovo
 model: haiku
 ---
 You are a Jira/Confluence data coordinator for a Salesforce delivery pipeline.
