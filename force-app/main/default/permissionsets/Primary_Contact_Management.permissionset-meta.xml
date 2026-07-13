@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Primary Contact Management</label>
+    <description>Grants field-level security (read/edit) on the Account and Contact fields that power automatic primary-contact reconciliation: Account.Primary_Contact__c, Contact.Is_Primary__c, and Contact.Primary_Marked_Date__c.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Primary_Contact__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Is_Primary__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Primary_Marked_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+</PermissionSet>
