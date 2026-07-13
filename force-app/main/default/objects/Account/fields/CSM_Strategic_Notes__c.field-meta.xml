@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSM_Strategic_Notes__c</fullName>
+    <description>CSM working notes capturing the stabilization plan, intervention history, and next steps for at-risk Accounts.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>CSM working notes: stabilization plan, intervention history, and next steps.</inlineHelpText>
+    <label>Strategic Notes / Intervention Plan</label>
+    <length>32768</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

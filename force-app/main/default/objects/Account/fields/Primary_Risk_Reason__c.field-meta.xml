@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Risk_Reason__c</fullName>
+    <description>Primary driver of attrition risk for this Account. Dependent on Health_Status__c — only available when Health Status is At Risk or Critical - Churn Risk.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Primary driver of attrition risk. Only relevant when Health Status is At Risk or Critical.</inlineHelpText>
+    <label>Primary Risk Reason</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Health_Status__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Low Product Adoption</fullName>
+                <default>false</default>
+                <label>Low Product Adoption</label>
+            </value>
+            <value>
+                <fullName>Pricing/Budget Constraints</fullName>
+                <default>false</default>
+                <label>Pricing/Budget Constraints</label>
+            </value>
+            <value>
+                <fullName>Competitor Pressure</fullName>
+                <default>false</default>
+                <label>Competitor Pressure</label>
+            </value>
+            <value>
+                <fullName>Support Issues</fullName>
+                <default>false</default>
+                <label>Support Issues</label>
+            </value>
+            <value>
+                <fullName>Loss of Executive Sponsor</fullName>
+                <default>false</default>
+                <label>Loss of Executive Sponsor</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>At Risk</controllingFieldValue>
+            <valueName>Low Product Adoption</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>At Risk</controllingFieldValue>
+            <valueName>Pricing/Budget Constraints</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>At Risk</controllingFieldValue>
+            <valueName>Competitor Pressure</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>At Risk</controllingFieldValue>
+            <valueName>Support Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>At Risk</controllingFieldValue>
+            <valueName>Loss of Executive Sponsor</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Critical - Churn Risk</controllingFieldValue>
+            <valueName>Low Product Adoption</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Critical - Churn Risk</controllingFieldValue>
+            <valueName>Pricing/Budget Constraints</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Critical - Churn Risk</controllingFieldValue>
+            <valueName>Competitor Pressure</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Critical - Churn Risk</controllingFieldValue>
+            <valueName>Support Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Critical - Churn Risk</controllingFieldValue>
+            <valueName>Loss of Executive Sponsor</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>
