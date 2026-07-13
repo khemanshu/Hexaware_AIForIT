@@ -72,10 +72,21 @@ the ticket: `jira_project`, `github_repo`, `github_default_branch`, `branch_pref
 4. Report the green result and the Jira test-scenarios comment URL from `qa-test-writer`.
 
 ### Phase 5 — PR creation
-1. `sf-developer` stages, commits, pushes the branch, and opens a PR to `main` via
-   `gh pr create`.
-2. Report the PR URL. The GitHub Action in `.github/workflows/` posts the automated
+1. Once Phase 4 validation is green and before committing, `sf-developer` updates
+   `MEMORY.md` with the enterprise-relevant conventions/decisions from this ticket
+   (new components, patterns, gotchas future tickets should know about) — see
+   `MEMORY.md` update rules below.
+2. `sf-developer` stages, commits (including the `MEMORY.md` update), pushes the
+   branch, and opens a PR to `main` via `gh pr create` — so the `MEMORY.md` change
+   ships in the same PR as the metadata.
+3. Report the PR URL. The GitHub Action in `.github/workflows/` posts the automated
    line-level review.
+
+**`MEMORY.md` update rules:** append/update only durable, reusable facts (new object/field
+naming patterns, new Apex/Flow conventions, integration gotchas, architectural decisions)
+— not a changelog of what this ticket did. If an existing section already covers the
+pattern, update it in place rather than duplicating. Keep entries terse and scoped to
+what a future `sf-architect` TDD or `sf-developer` build would need to know.
 
 The pipeline stops here. Deployment to Salesforce after merge is a separate, manual,
 out-of-band action — not part of this protocol.

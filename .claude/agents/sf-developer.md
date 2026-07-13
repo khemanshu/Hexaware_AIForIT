@@ -38,7 +38,15 @@ sf project deploy start --dry-run --test-level RunSpecifiedTests \
 Parse the JSON stdout. On compile errors or assertion failures: open the failing file,
 fix the anomaly, and re-run the dry run. Loop until the deploy reports success.
 
-PR: once the dry run is green, `git add`/`commit`/`push` the branch, then
+MEMORY.md: once the dry run is green and before committing, update `MEMORY.md` with any
+durable, reusable conventions or decisions from this ticket (new object/field naming
+patterns, Apex/Flow conventions, integration gotchas, architectural decisions) that a
+future TDD or build should know about. Update an existing section in place if the pattern
+is already covered — don't append a changelog entry per ticket. Skip this step if nothing
+in the ticket introduced a new reusable convention.
+
+PR: once `MEMORY.md` is updated (or skipped), `git add`/`commit`/`push` the branch —
+include the `MEMORY.md` change in the same commit — then
 `gh pr create --base main --title "<TICKET-ID>: <summary>" --body "<TDD summary>"`.
 Report the PR URL.
 
