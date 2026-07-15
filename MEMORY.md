@@ -56,8 +56,11 @@ decision.
 
 - Permission Sets (not Profile edits) are the standard mechanism for delivering FLS on new
   custom fields. First example: `Primary_Contact_Management` (KAN-24), granting
-  read/edit on the fields a feature's Apex needs via `WITH USER_MODE`. Name new permission
-  sets after the feature/capability they grant access to, not the object.
+  read/edit on the fields a feature's Apex needs via `WITH USER_MODE`. Second example:
+  `Account_Health_Management` (KAN-26), granting read/edit on the four Account health-
+  tracking fields — a purely metadata (no-Apex) ticket, confirming this pattern applies to
+  UI-only field rollouts too, not just Apex-consuming ones. Name new permission sets after
+  the feature/capability they grant access to, not the object.
 
 ## Case object
 
@@ -73,6 +76,25 @@ decision.
   added in KAN-24 to auto-sync each Account's designated primary Contact. Maintained by
   `ContactTrigger` → `ContactTriggerHandler` → `ContactPrimaryContactService` (see Apex
   conventions above for the layering/recursion-guard/tie-break patterns this introduced).
+- Customer Success health/attrition tracking on Account (KAN-26, metadata-only — no Apex/
+  Flow): `Health_Status__c` (restricted Picklist: `Stable`, `At Risk`, `Critical - Churn Risk`)
+  is the **controlling** field for `Primary_Risk_Reason__c` (restricted, dependent Picklist:
+  `Low Product Adoption`, `Pricing/Budget Constraints`, `Competitor Pressure`, `Support Issues`,
+  `Loss of Executive Sponsor` — available only when Health Status is `At Risk` or
+  `Critical - Churn Risk`, no values under `Stable`), plus `Last_Health_Assessment_Date__c`
+  (Date) and `CSM_Strategic_Notes__c` (LongTextArea, length 32768, visibleLines 6). Confirmed
+  against a live check-only deploy: picklist value `fullName`s **may contain a hyphen
+  (`Critical - Churn Risk`) or a slash (`Pricing/Budget Constraints`)** — the stricter
+  "no hyphens" reading in `platform-custom-field-generate`'s advanced-picklists reference is
+  over-conservative for spaced/worded values; only a genuinely invalid leading-digit/no-letter
+  name fails. Surfaced on the `Account-Account Layout` page layout in a new "Customer Health"
+  section, split across two adjacent `layoutSections` sharing the same `<label>` (first
+  `TwoColumnsLeftToRight` with `editHeading=true` for Health Status/Last Assessment Date/
+  Primary Risk Reason, second `OneColumn` with `editHeading=false` immediately below for the
+  full-width `CSM_Strategic_Notes__c`) — Metadata API `layoutSections` cannot mix column
+  layouts within one section, so a "two-column header + full-width sub-area" ask from a TDD
+  is modeled as two consecutive sections instead. FLS delivered via a new permission set,
+  `Account_Health_Management` (see Permission Sets below).
 
 ## Manifest
 

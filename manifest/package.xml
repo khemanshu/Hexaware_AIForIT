@@ -37,10 +37,15 @@
         <members>Account.Primary_Contact__c</members>
         <members>Contact.Is_Primary__c</members>
         <members>Contact.Primary_Marked_Date__c</members>
+        <members>Account.Health_Status__c</members>
+        <members>Account.Primary_Risk_Reason__c</members>
+        <members>Account.Last_Health_Assessment_Date__c</members>
+        <members>Account.CSM_Strategic_Notes__c</members>
         <name>CustomField</name>
     </types>
     <types>
         <members>Primary_Contact_Management</members>
+        <members>Account_Health_Management</members>
         <name>PermissionSet</name>
     </types>
     <types>
