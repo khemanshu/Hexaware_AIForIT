@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>VIP Client Read Only</label>
+    <description>Grants read-only field-level security on the Account fields that power VIP client flagging and prioritization: VIP_Tier__c, Dedicated_Account_Manager__c, and Special_Handling_Notes__c.</description>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.VIP_Tier__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.Dedicated_Account_Manager__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.Special_Handling_Notes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+</PermissionSet>

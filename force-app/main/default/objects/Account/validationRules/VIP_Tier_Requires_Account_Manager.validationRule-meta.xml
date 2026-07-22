@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VIP_Tier_Requires_Account_Manager</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    OR(
+        ISPICKVAL(VIP_Tier__c, &quot;Gold&quot;),
+        ISPICKVAL(VIP_Tier__c, &quot;Platinum&quot;)
+    ),
+    ISBLANK(Dedicated_Account_Manager__c)
+)</errorConditionFormula>
+    <errorDisplayField>Dedicated_Account_Manager__c</errorDisplayField>
+    <errorMessage>A Dedicated Account Manager is required for Gold and Platinum VIP accounts. Please assign one before saving.</errorMessage>
+</ValidationRule>
