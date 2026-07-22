@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Special_Handling_Notes__c</fullName>
+    <description>Free-text notes capturing special handling requirements for VIP clients, such as SLA commitments and executive contacts.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Document any SLAs, executive contacts, or special handling requirements for this VIP client.</inlineHelpText>
+    <label>Special Handling Notes</label>
+    <length>32768</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

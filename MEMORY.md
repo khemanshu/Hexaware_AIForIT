@@ -61,6 +61,11 @@ decision.
   tracking fields — a purely metadata (no-Apex) ticket, confirming this pattern applies to
   UI-only field rollouts too, not just Apex-consuming ones. Name new permission sets after
   the feature/capability they grant access to, not the object.
+- When a feature needs two access tiers, deliver them as two separate permission sets
+  rather than one set with mixed FLS: `VIP_Client_Management` (edit) / `VIP_Client_Read_Only`
+  (read-only), both granting FLS on the same field list (KAN-27, `Account.VIP_Tier__c` /
+  `Dedicated_Account_Manager__c` / `Special_Handling_Notes__c`). Keeps assignment simple
+  (assign one or the other per user/role) instead of relying on profile-layered FLS overrides.
 
 ## Case object
 
@@ -94,16 +99,50 @@ decision.
   full-width `CSM_Strategic_Notes__c`) — Metadata API `layoutSections` cannot mix column
   layouts within one section, so a "two-column header + full-width sub-area" ask from a TDD
   is modeled as two consecutive sections instead. FLS delivered via a new permission set,
-  `Account_Health_Management` (see Permission Sets below).
+  `Account_Health_Management` (see Permission Sets below). This two-consecutive-sections
+  technique (`TwoColumnsLeftToRight` + `editHeading=true`, immediately followed by
+  `OneColumn` + `editHeading=false`, both sharing the same `<label>`) was reused in KAN-27
+  for the "VIP Client Details" section (Tier/Dedicated Account Manager in the two-column
+  header row, `Special_Handling_Notes__c` full-width below) — this is now the established,
+  repo-confirmed pattern for "labeled header row + full-width note field" layout asks on
+  `Account-Account Layout`, not a one-off.
+- VIP client flagging (KAN-27, metadata-only — no Apex/Flow): `VIP_Tier__c` (restricted
+  Picklist: `Standard` default, `Gold`, `Platinum`), `Dedicated_Account_Manager__c` (Lookup
+  to User), and `Special_Handling_Notes__c` (LongTextArea). A validation rule,
+  `Account.VIP_Tier_Requires_Account_Manager`, requires `Dedicated_Account_Manager__c` to be
+  populated whenever `VIP_Tier__c` is `Gold` or `Platinum`. FLS delivered via two permission
+  sets, `VIP_Client_Management` / `VIP_Client_Read_Only` (see Permission Sets below). This is
+  the first `ValidationRule` component tracked in this repo's manifest — see Manifest below
+  for the package.xml implication.
+
+## Validation gotcha: AIFORIT org may be missing prior "validated" metadata
+
+- Check-only dry runs are rolled back by design — a ticket passing its dry run does **not**
+  mean its metadata was ever actually deployed to the target org. Discovered in KAN-27
+  Phase 4: a dry run scoped only to the new KAN-27 files failed because the AIFORIT org
+  does not actually have the KAN-26 Account fields (e.g. `Health_Status__c`) that the
+  existing `Account-Account Layout` layout references — KAN-26 had only ever been
+  check-only validated, never really deployed. When a targeted dry run references
+  pre-existing layout/metadata that depends on a prior ticket's fields, widen the dry run's
+  scope (or its `--tests`/manifest inputs) to include that prior ticket's metadata too,
+  rather than assuming "merged PR" implies "present in the org."
 
 ## Manifest
 
 - `manifest/package.xml` uses `<members>*</members>` wildcards for most metadata types
-  (ApexClass, LightningComponentBundle, etc.) and lists `CustomField` members explicitly
-  (currently just `Case.Region__c`). Follow this pattern: add new custom fields/objects as
+  (ApexClass, LightningComponentBundle, etc.) and lists `CustomField`/`PermissionSet`/
+  `Layout` members explicitly. Follow this pattern: add new custom fields/objects as
   explicit `<members>`, rely on the wildcard for class/component types.
+- Every metadata **type** new to the manifest needs its own `<types>` block (with `<name>`
+  set to the Metadata API type name), not just a new `<members>` entry under an existing
+  block — a `<types>` block only ever holds members of the one type named in its `<name>`.
+  First surfaced in KAN-27 adding the first `ValidationRule` (`Account.
+  VIP_Tier_Requires_Account_Manager`): it required a brand-new `<types><name>ValidationRule
+  </name></types>` block, it could not be appended into the existing `CustomField` or
+  `PermissionSet` blocks.
 - Current manifest API version is `67.0`. `.agentforce-pipeline.yml` still says `66.0` —
-  treat the manifest's actual version as authoritative until the config is updated.
+  the manifest's own `<version>` is authoritative; do not downgrade `package.xml` to match
+  the config file, update the config instead if/when a ticket needs to.
 
 ## Notes on migrated conventions
 

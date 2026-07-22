@@ -41,17 +41,26 @@
         <members>Account.Primary_Risk_Reason__c</members>
         <members>Account.Last_Health_Assessment_Date__c</members>
         <members>Account.CSM_Strategic_Notes__c</members>
+        <members>Account.VIP_Tier__c</members>
+        <members>Account.Dedicated_Account_Manager__c</members>
+        <members>Account.Special_Handling_Notes__c</members>
         <name>CustomField</name>
     </types>
     <types>
         <members>Primary_Contact_Management</members>
         <members>Account_Health_Management</members>
+        <members>VIP_Client_Management</members>
+        <members>VIP_Client_Read_Only</members>
         <name>PermissionSet</name>
     </types>
     <types>
         <members>Account-Account Layout</members>
         <members>Contact-Contact Layout</members>
         <name>Layout</name>
+    </types>
+    <types>
+        <members>Account.VIP_Tier_Requires_Account_Manager</members>
+        <name>ValidationRule</name>
     </types>
     <version>67.0</version>
 </Package>
